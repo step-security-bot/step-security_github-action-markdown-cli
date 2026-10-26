@@ -1,0 +1,66 @@
+# yamllint disable rule:line-length
+---
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: 3.x
+      - name: Perform pre-commit checks
+        uses: step-security/pre-commit-action@v3
+        env:
+          SKIP: no-commit-to-branch
+
+  local-test:
+    needs: pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@v7
+      - name: Test the problem matcher
+        id: expect-failure
+        uses: ./
+        with:
+          config_file: .markdownlintrc
+          files: .
+          rules: examples/rules/custom.js
+        continue-on-error: true
+      - name: Check the result of the problem matcher test
+        if: ${{ steps.expect-failure.outcome != 'failure' }}
+        run: |
+          exit 1
+      - name: Test ignore_files
+        uses: ./
+        with:
+          config_file: .markdownlintrc
+          files: .
+          ignore_files: examples/ignore/*
+          rules: examples/rules/custom.js
+      - name: Test ignore_path
+        uses: ./
+        with:
+          config_file: .markdownlintrc
+          files: .
+          ignore_path: examples/.markdownlintignore
+          rules: examples/rules/custom.js
