@@ -14,7 +14,7 @@ Basic usage with all options enabled:
 
 ```yaml
 - name: markdownlint-cli
-  uses: step-security/github-action-markdown-cli@v3.5.0
+  uses: step-security/github-action-markdown-cli@v3
   with:
     files: .
     config_file: .markdownlint.yaml

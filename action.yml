@@ -1,6 +1,6 @@
 ---
 name: markdownlint-cli
-author: Nick Osborn
+author: 'step-security'
 description: Style checker and lint tool for Markdown/CommonMark files.
 
 inputs:
