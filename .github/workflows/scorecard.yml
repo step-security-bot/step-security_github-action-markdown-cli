@@ -1,0 +1,46 @@
+# yamllint disable rule:line-length
+#
+# There are restrictions on this workflow:
+# https://github.com/ossf/scorecard-action#workflow-restrictions
+---
+name: OpenSSF Scorecard
+
+on:
+  schedule:
+    - cron: 18 2 * * 1
+  push:
+    branches:
+      - master
+  branch_protection_rule: {}
+
+permissions: # no workflow-level write permissions allowed
+  contents: read
+
+concurrency:
+  group: scorecard
+  cancel-in-progress: true
+
+jobs:
+  analysis:
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+      security-events: write
+    if: github.event.repository.default_branch == github.ref_name || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+      - name: Perform analysis
+        uses: ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a # v2.4.3
+        with:
+          publish_results: true
+          results_file: results.sarif
+          results_format: sarif
+      - name: Upload to code scanning
+        uses: github/codeql-action/upload-sarif@ce729e4d353d580e6cacd6a8cf2921b72e5e310a # v3.29.0
+        with:
+          sarif_file: results.sarif
