@@ -1,12 +1,10 @@
-[![StepSecurity Maintained Action](https://raw.githubusercontent.com/step-security/maintained-actions-assets/main/assets/maintained-action-banner.png)](https://docs.stepsecurity.io/actions/stepsecurity-maintained-actions)
-
 # github-action-markdown-cli
+
+[![StepSecurity Maintained Action](https://raw.githubusercontent.com/step-security/maintained-actions-assets/main/assets/maintained-action-banner.png)](https://docs.stepsecurity.io/actions/stepsecurity-maintained-actions)
 
 A GitHub Action that performs style checking and linting for Markdown/CommonMark files using [markdownlint-cli](https://github.com/igorshubovych/markdownlint-cli).
 
 [![CI Workflow Status](https://github.com/step-security/github-action-markdown-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/step-security/github-action-markdown-cli/actions/workflows/ci.yml)
-[![Release Workflow Status](https://github.com/step-security/github-action-markdown-cli/actions/workflows/release.yml/badge.svg)](https://github.com/step-security/github-action-markdown-cli/actions/workflows/release.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/step-security/github-action-markdown-cli/badge)](https://scorecard.dev/viewer/?uri=github.com/step-security/github-action-markdown-cli)
 
 ## Usage
 

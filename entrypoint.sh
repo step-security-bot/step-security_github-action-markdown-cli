@@ -41,20 +41,31 @@ if [ "$REPO_PRIVATE" != "false" ]; then
   fi
 fi
 
-MARKDOWNLINT=markdownlint
-MARKDOWNLINT="${MARKDOWNLINT}${INPUT_CONFIG_FILE:+ -c ${INPUT_CONFIG_FILE}}"
-MARKDOWNLINT="${MARKDOWNLINT}${INPUT_DOT:+ -d}"
-MARKDOWNLINT="${MARKDOWNLINT}${INPUT_IGNORE_FILES:+ -i ${INPUT_IGNORE_FILES}}"
-MARKDOWNLINT="${MARKDOWNLINT}${INPUT_IGNORE_PATH:+ -p ${INPUT_IGNORE_PATH}}"
-MARKDOWNLINT="${MARKDOWNLINT}${INPUT_RULES:+ -r ${INPUT_RULES}}"
+set -- markdownlint
+if [ -n "${INPUT_CONFIG_FILE}" ]; then
+  set -- "$@" -c "${INPUT_CONFIG_FILE}"
+fi
+if [ -n "${INPUT_DOT}" ]; then
+  set -- "$@" -d
+fi
+if [ -n "${INPUT_IGNORE_FILES}" ]; then
+  set -- "$@" -i "${INPUT_IGNORE_FILES}"
+fi
+if [ -n "${INPUT_IGNORE_PATH}" ]; then
+  set -- "$@" -p "${INPUT_IGNORE_PATH}"
+fi
+if [ -n "${INPUT_RULES}" ]; then
+  set -- "$@" -r "${INPUT_RULES}"
+fi
 
 PROBLEM_MATCHER="$(mktemp -p "${GITHUB_WORKSPACE:?}")"
 trap 'rm -f "${PROBLEM_MATCHER}"' EXIT
 cp /markdownlint-problem-matcher.json "${PROBLEM_MATCHER:?}" || exit
 echo "::add-matcher::${PROBLEM_MATCHER:?}"
 
+# INPUT_FILES is intentionally word-split to support multiple space-separated paths/globs
 # shellcheck disable=SC2086
-npx ${MARKDOWNLINT} ${INPUT_FILES:?}
+npx "$@" ${INPUT_FILES:?}
 readonly RC=$?
 
 echo '::remove-matcher owner=markdownlint::'
